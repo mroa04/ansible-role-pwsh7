@@ -1,2 +1,40 @@
 ---
-# tasks file for
+# tasks file for downloading powershell 7 version
+
+
+- name: Ensure temp dir exists
+  ansible.windows.win_file:
+    path: "{{ ps7_dir }}"
+    state: directory
+
+- name: Download PowerShell {{ ps7_version }} MSI
+  ansible.windows.win_get_url:
+    url: "{{ ps7_url }}"
+    dest: "{{ ps7_dir }}\\{{ ps7_msi }}"
+    force: false
+
+- name: Install PowerShell {{ ps7_version }} (silent, add PATH, enable remoting, register manifest)
+  ansible.windows.win_package:
+    path: "{{ ps7_dir }}\\{{ ps7_msi }}"
+    product_id: '{31FCA3DC-0A74-4B35-AC7A-POWERSHELL7-{{ ps7_version | regex_replace("\\.", "") }}-{{ ps7_arch | upper }}'  # dummy-ish to let Ansible track; remove if undesired
+    arguments: >
+      ADD_PATH=1
+      ENABLE_PSREMOTING=1
+      REGISTER_MANIFEST=1
+      ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1
+      ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1
+      ENABLE_MU=1
+      USE_MU=1
+      /qn /norestart
+    state: present
+  register: ps7_installed
+
+- name: Verify pwsh version
+  ansible.windows.win_powershell:
+    command: 'pwsh -NoLogo -NoProfile -Command "$PSVersionTable.PSVersion.ToString()"'
+  register: pwsh_ver
+  changed_when: false
+
+- name: Show installed PowerShell version
+  ansible.builtin.debug:
+    msg
