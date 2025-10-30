@@ -1,5 +1,8 @@
 ---
-# defaults file for payloads-[payload_name]
 
-input_paths: []
-output_path: "/share/Working/payloads-auto/"
+ps7_version: "7.5.4"
+ps7_arch: "x64"
+ps7_dir: "C:\\Windows\\Temp"
+ps7_msi: "PowerShell-{{ ps7_version }}-win-{{ ps7_arch }}.msi"
+ps7_url: "https://github.com/PowerShell/PowerShell/releases/download/v{{ ps7_version }}/{{ ps7_msi }}"
+
