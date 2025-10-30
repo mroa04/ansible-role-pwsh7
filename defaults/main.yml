@@ -1,0 +1,5 @@
+---
+# defaults file for payloads-[payload_name]
+
+input_paths: []
+output_path: "/share/Working/payloads-auto/"
